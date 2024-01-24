@@ -202,6 +202,7 @@ git_trees () {
 }
 
 run_roostock_ng () {
+	echo "Log: (RootStock-NG): running run_roostock_ng"
 	if [ ! -f ${DIR}/.project ] ; then
 		echo "error: [.project] file not defined"
 		exit 1
