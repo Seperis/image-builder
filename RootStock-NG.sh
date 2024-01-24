@@ -184,6 +184,7 @@ update_git_mirror () {
 }
 
 git_trees () {
+	echo "Log: (RootStock-NG): running git_trees"
 	if [ ! -d ${DIR}/git/ ] ; then
 		mkdir -p ${DIR}/git/
 	fi
