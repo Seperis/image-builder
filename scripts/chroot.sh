@@ -984,6 +984,12 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 		fi
 	}
 
+ 	install_bb_overlays() {
+  		echo "Log: (chroot): compiling and installing bb_overlays"
+    		cd /opt/source/bb.org-overlays
+      		./install.sh
+	}
+
 	system_tweaks () {
 		echo "Log: (chroot): system_tweaks"
 		echo "[options]" > /etc/e2fsck.conf
@@ -1492,6 +1498,7 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 	install_pkgs
 	install_python_pkgs
 	install_docker_ce
+ 	install_bb_overlays
 	system_tweaks
 	set_locale
 	if [ "x${chroot_not_reliable_deborphan}" = "xenable" ] ; then
