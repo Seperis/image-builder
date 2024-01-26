@@ -1186,7 +1186,7 @@ populate_rootfs () {
 				echo "#uboot_overlay_addr7=<file7>.dtbo" >> ${wfile}
 				echo "###" >> ${wfile}
 				echo "###Custom Cape" >> ${wfile}
-				echo "#dtb_overlay=<file8>.dtbo" >> ${wfile}
+				echo "dtb_overlay=/lib/firmware/BB-GATEWAY-WL1837-00A0.dtbo" >> ${wfile}
 				echo "###" >> ${wfile}
 				echo "###Debug: disable uboot autoload of Cape" >> ${wfile}
 				echo "#disable_uboot_overlay_addr0=1" >> ${wfile}
@@ -1225,7 +1225,7 @@ populate_rootfs () {
 				echo "#uboot_overlay_addr7=<file7>.dtbo" >> ${wfile}
 				echo "###" >> ${wfile}
 				echo "###Custom Cape" >> ${wfile}
-				echo "#dtb_overlay=<file8>.dtbo" >> ${wfile}
+				echo "dtb_overlay=/lib/firmware/BB-GATEWAY-WL1837-00A0.dtbo" >> ${wfile}
 				echo "###" >> ${wfile}
 				echo "###Disable auto loading of virtual capes (emmc/video/wireless/adc)" >> ${wfile}
 				if [ "x${uboot_disable_emmc}" = "xenable" ] ; then
