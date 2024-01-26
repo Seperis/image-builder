@@ -757,6 +757,7 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 	}
 
 	install_pkg_updates () {
+ 		echo "Log: (chroot): updating packages"
 		if [ -f /tmp/repos.azulsystems.com.pubkey.asc ] ; then
 			apt-key add /tmp/repos.azulsystems.com.pubkey.asc
 			rm -f /tmp/repos.azulsystems.com.pubkey.asc || true
@@ -838,6 +839,15 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 			apt-get install -y -q ${deb_additional_pkgs}
 		fi
 
+  		echo "debug: (chroot): adding as systemd-resolve is killing dns"
+    		if [ ! -f /etc/resolv.conf ] ; then
+			echo "debug: /etc/resolv.conf was removed! Fixing..."
+			#'/etc/resolv.conf.bak' -> '/etc/resolv.conf'
+			#cp: not writing through dangling symlink '/etc/resolv.conf'
+			cp -v --remove-destination /etc/resolv.conf.bak /etc/resolv.conf
+		fi
+		echo "---------------------------------"
+  
 		if [ ! "x${deb_console_application_pkgs}" = "x" ] ; then
 			#Install the user choosen list.
 			echo "Log: (chroot) Installing (deb_console_application_pkgs): ${deb_console_application_pkgs}"
