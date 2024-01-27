@@ -1478,14 +1478,13 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 			systemctl enable bbbio-set-sysconf.service || true
 		fi
 	}
-
+ 
 	update_configuration_files () {
-        echo "Log: (chroot): running update_configuration_files"
+ 		echo "Log: (chroot): running update_configuration_files"
         if [ -f /etc/nanorc ]; then
             echo "Log: (chroot): update nanorc"
             sed -i "s|# set tabsize 8|set tabsize 4|" /etc/nanorc
         fi
-
         if [ -f /etc/ssh/sshd_config ]; then
             echo "Log: (chroot): update sshd_config"
             sed -i "s|#Port 22|Port 2222|" /etc/ssh/sshd_config
@@ -1497,8 +1496,8 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 			echo "Log: (chroot): update samba shares"
 			# add to samba
 			echo "# shares" >> /etc/samba/smb.conf
-			echo "[circe]" >> /etc/samba/smb.conf
-			echo "  comment=Circe" >> /etc/samba/smb.conf
+			echo "[${rfs_hostname}]" >> /etc/samba/smb.conf
+			echo "  comment=${rfs_hostname}" >> /etc/samba/smb.conf
 			echo "  path=/" >> /etc/samba/smb.conf
 			echo "  browseable=yes" >> /etc/samba/smb.conf
 			echo "  guest ok=yes" >> /etc/samba/smb.conf
@@ -1517,7 +1516,7 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 		fi		
     }
 
-    create_shared_directories(){
+create_shared_directories (){
         echo "Log: (chroot):  create_shared_directories"
         mkdir -p /home/shared
         mkdir -p /mnt/linux
@@ -1531,64 +1530,64 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
         chmod -R 777 /mnt/scripts
         chown -R nobody:nogroup /mnt/scripts
 
-		if [ -f /home/jennifer ]; then
-			mkdir -p /home/jennifer/projects/beaglebone
-		fi
-    }
+	if [ -f /home/jennifer ]; then
+		mkdir -p /home/jennifer/projects/beaglebone
+	fi
+}
 
-    download_files(){
-		echo "Log: (chroot): downloading files"
-		if [ -e /home/jennifer/.ssh ]; then
-			# download documents and move to correct folders
-			wget -P /home/jennifer/.ssh http://192.168.1.25/downloads/files/authorized_keys
-			chmod 600 /home/jennifer/.ssh/authorized_keys
-			chmod 700 /home/jennifer/.ssh
-			chown -R jennifer:jennifer /home/jennifer/.ssh
-		else
-			wget -P /home/shared http://192.168.1.25/downloads/files/authorized_keys
-		fi
-		wget -P /etc http://192.168.1.25/downloads/files/cred-andromeda
-		wget -P /etc http://192.168.1.25/downloads/files/cred-ildico
-		wget -P /etc/systemd/system/ http://192.168.1.25/downloads/files/mnt-linux.mount
-		wget -P /etc/systemd/system/ http://192.168.1.25/downloads/files/mnt-scripts.mount
-	}
+download_files() {
+	echo "Log: (chroot): downloading files"
+	if [ -e /home/jennifer/.ssh ]; then
+		# download documents and move to correct folders
+		wget -P /home/jennifer/.ssh http://192.168.1.25/downloads/files/authorized_keys
+		chmod 600 /home/jennifer/.ssh/authorized_keys
+		chmod 700 /home/jennifer/.ssh
+		chown -R jennifer:jennifer /home/jennifer/.ssh
+	else
+		wget -P /home/shared http://192.168.1.25/downloads/files/authorized_keys
+	fi
+	wget -P /etc http://192.168.1.25/downloads/files/cred-andromeda
+	wget -P /etc http://192.168.1.25/downloads/files/cred-ildico
+	wget -P /etc/systemd/system/ http://192.168.1.25/downloads/files/mnt-linux.mount
+	wget -P /etc/systemd/system/ http://192.168.1.25/downloads/files/mnt-scripts.mount
+}
 
-	enable_system_mount(){
-		echo "Log: (chroot): enable_system_mount"
-		if [ -f /etc/systemd/system/mnt-linux.mount ]; then
-			echo "Log: (chroot): enabling linux folder mounting service."
-			echo "Log: (chroot): [systemctl enable mnt-linux.mount]"
-			systemctl enable mnt-linux.mount
-		fi
-		if [ -f /etc/systemd/system/mnt-scripts.mount ]; then
-			echo "Log: (chroot): enabling and starting script mounting service."
-			echo "Log: (chroot): [systemctl enable mnt-scripts.mount]"
-			systemctl enable mnt-scripts.mount
-		fi
-	}
+enable_system_mount() {
+	echo "Log: (chroot): enable_system_mount"
+	if [ -f /etc/systemd/system/mnt-linux.mount ]; then
+		echo "Log: (chroot): enabling linux folder mounting service."
+		echo "Log: (chroot): [systemctl enable mnt-linux.mount]"
+		systemctl enable mnt-linux.mount
+	fi
+	if [ -f /etc/systemd/system/mnt-scripts.mount ]; then
+		echo "Log: (chroot): enabling and starting script mounting service."
+		echo "Log: (chroot): [systemctl enable mnt-scripts.mount]"
+		systemctl enable mnt-scripts.mount
+	fi
+}
 
-	download_script_repo (){
-		echo "Log: (chroot): download_script_repo"
-		chmod -R 777 /usr/local/bin/
-		chown -R jennifer:jennifer /usr/local/bin/
-		if [ -f /mnt/scripts/general ]; then
-			echo "Log: (chroot): [cp /mnt/scripts/general/* /usr/local/bin/]"
-			cp /mnt/scripts/general/* /usr/local/bin/
-		fi
-		if [ -f /mnt/scripts/libraries ]; then
-			echo "Log: (chroot): [cp /mnt/scripts/libraries/lib_comp /usr/local/bin/]"
-			cp /mnt/scripts/libraries/lib_comp /usr/local/bin/
-		fi
-		chmod -R 777 /usr/local/bin/
-	}
+download_script_repo () {
+	echo "Log: (chroot): download_script_repo"
+	chmod -R 777 /usr/local/bin/
+	chown -R jennifer:jennifer /usr/local/bin/
+	if [ -f /mnt/scripts/general ]; then
+		echo "Log: (chroot): [cp /mnt/scripts/general/* /usr/local/bin/]"
+		cp /mnt/scripts/general/* /usr/local/bin/
+	fi
+	if [ -f /mnt/scripts/libraries ]; then
+		echo "Log: (chroot): [cp /mnt/scripts/libraries/lib_comp /usr/local/bin/]"
+		cp /mnt/scripts/libraries/lib_comp /usr/local/bin/
+	fi
+	chmod -R 777 /usr/local/bin/
+}
 
-	add_welcome_script(){
-		echo "Log: (chroot): add_welcome_script"
-		if [ -f /usr/local/bin/ssh_welcome ]; then
-			echo "Log: (chroot): [echo "ssh_welcome" >> /etc/profile]"
-			echo "ssh_welcome" >> /etc/profile
-		fi
-	}
+add_welcome_script() {
+	echo "Log: (chroot): add_welcome_script"
+	if [ -f /usr/local/bin/ssh_welcome ]; then
+		echo "Log: (chroot): [echo "ssh_welcome" >> /etc/profile]"
+		echo "ssh_welcome" >> /etc/profile
+	fi
+}
 
 	grub_tweaks () {
 		echo "Log: (chroot): grub_tweaks"
