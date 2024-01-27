@@ -994,12 +994,6 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 		fi
 	}
 
- 	install_bb_overlays() {
-  		echo "Log: (chroot): compiling and installing bb_overlays"
-    		cd /opt/source/bb.org-overlays
-      		./install.sh
-	}
-
 	system_tweaks () {
 		echo "Log: (chroot): system_tweaks"
 		echo "[options]" > /etc/e2fsck.conf
@@ -1557,6 +1551,8 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 	if [ -d /opt/sgx/ ] ; then
 		chown -R ${rfs_username}:${rfs_username} /opt/sgx/
 	fi
+
+ 	
 
 	rm -f /chroot_script.sh || true
 __EOF__
