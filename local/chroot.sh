@@ -1492,28 +1492,28 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
             sed -i "s|#AuthorizedKeysFile|AuthorizedKeysFile|" /etc/ssh/sshd_config
         fi
 		
-		if [ -f /etc/samba/smb.conf ]; then
-			echo "Log: (chroot): update samba shares"
-			# add to samba
-			echo "# shares" >> /etc/samba/smb.conf
-			echo "[${rfs_hostname}]" >> /etc/samba/smb.conf
-			echo "  comment=${rfs_hostname}" >> /etc/samba/smb.conf
-			echo "  path=/" >> /etc/samba/smb.conf
-			echo "  browseable=yes" >> /etc/samba/smb.conf
-			echo "  guest ok=yes" >> /etc/samba/smb.conf
-			echo "  read only=no" >> /etc/samba/smb.conf
-			echo "  create mask=0755" >> /etc/samba/smb.conf
-			echo "  directory mask=0755" >> /etc/samba/smb.conf
-			echo " " >> /etc/samba/smb.conf
-			echo "[shared]" >> /etc/samba/smb.conf
-			echo "  comment=Shared" >> /etc/samba/smb.conf
-			echo "  path=/home/shared" >> /etc/samba/smb.conf
-			echo "  browseable=yes" >> /etc/samba/smb.conf
-			echo "  guest ok=yes" >> /etc/samba/smb.conf
-			echo "  read only=no" >> /etc/samba/smb.conf
-			echo "  create mask=0777" >> /etc/samba/smb.conf
-			echo "  directory mask=0777" >> /etc/samba/smb.conf
-		fi		
+	if [ -f /etc/samba/smb.conf ]; then
+		echo "Log: (chroot): update samba shares"
+		# add to samba
+		echo "# shares" >> /etc/samba/smb.conf
+		echo "[${rfs_hostname}]" >> /etc/samba/smb.conf
+		echo "  comment=${rfs_hostname}" >> /etc/samba/smb.conf
+		echo "  path=/" >> /etc/samba/smb.conf
+		echo "  browseable=yes" >> /etc/samba/smb.conf
+		echo "  guest ok=yes" >> /etc/samba/smb.conf
+		echo "  read only=no" >> /etc/samba/smb.conf
+		echo "  create mask=0755" >> /etc/samba/smb.conf
+		echo "  directory mask=0755" >> /etc/samba/smb.conf
+		echo " " >> /etc/samba/smb.conf
+		echo "[shared]" >> /etc/samba/smb.conf
+		echo "  comment=Shared" >> /etc/samba/smb.conf
+		echo "  path=/home/shared" >> /etc/samba/smb.conf
+		echo "  browseable=yes" >> /etc/samba/smb.conf
+		echo "  guest ok=yes" >> /etc/samba/smb.conf
+		echo "  read only=no" >> /etc/samba/smb.conf
+		echo "  create mask=0777" >> /etc/samba/smb.conf
+		echo "  directory mask=0777" >> /etc/samba/smb.conf
+	fi		
     }
 
 create_shared_directories (){
@@ -1570,13 +1570,9 @@ download_script_repo () {
 	echo "Log: (chroot): download_script_repo"
 	chmod -R 777 /usr/local/bin/
 	chown -R jennifer:jennifer /usr/local/bin/
-	if [ -f /mnt/scripts/general ]; then
+	if [ -f /mnt/scripts ]; then
 		echo "Log: (chroot): [cp /mnt/scripts/general/* /usr/local/bin/]"
 		cp /mnt/scripts/general/* /usr/local/bin/
-	fi
-	if [ -f /mnt/scripts/libraries ]; then
-		echo "Log: (chroot): [cp /mnt/scripts/libraries/lib_comp /usr/local/bin/]"
-		cp /mnt/scripts/libraries/lib_comp /usr/local/bin/
 	fi
 	chmod -R 777 /usr/local/bin/
 }
