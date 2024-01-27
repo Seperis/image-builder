@@ -1088,6 +1088,18 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 		fi
 	}
 
+ update_skel() {
+		if [ -f /etc/skel/.bashrc ]; then
+			echo "Log: (chroot): update .bashrc in skel"
+            sed -i "s|#force_color_prompt|force_color_prompt|" /etc/skel/.bashrc
+            echo "Log: (chroot): add .bash_aliases in skel"
+            touch /etc/skel/.bash_aliases
+            echo "Log: (chroot): add extra directories in skel"
+            mkdir -p /etc/skel/.ssh
+            mkdir -p /etc/skel/projects
+        fi
+    }
+
 	add_user () {
 		echo "Log: (chroot): add_user"
 		groupadd -r admin || true
@@ -1467,6 +1479,112 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 		fi
 	}
 
+ 	update_configuration_files () {
+ 		echo "Log: (chroot): running update_configuration_files"
+        if [ -f /etc/nanorc ]; then
+            echo "Log: (chroot): update nanorc"
+            sed -i "s|# set tabsize 8|set tabsize 4|" /etc/nanorc
+        fi
+        if [ -f /etc/ssh/sshd_config ]; then
+            echo "Log: (chroot): update sshd_config"
+            sed -i "s|#Port 22|Port 2222|" /etc/ssh/sshd_config
+            sed -i "s|#PubkeyAuthentication|PubkeyAuthentication|" /etc/ssh/sshd_config
+            sed -i "s|#AuthorizedKeysFile|AuthorizedKeysFile|" /etc/ssh/sshd_config
+        fi
+		
+		if [ -f /etc/samba/smb.conf ]; then
+			echo "Log: (chroot): update samba shares"
+			# add to samba
+			echo "# shares" >> /etc/samba/smb.conf
+			echo "[${rfs_hostname}]" >> /etc/samba/smb.conf
+			echo "  comment=${rfs_hostname}" >> /etc/samba/smb.conf
+			echo "  path=/" >> /etc/samba/smb.conf
+			echo "  browseable=yes" >> /etc/samba/smb.conf
+			echo "  guest ok=yes" >> /etc/samba/smb.conf
+			echo "  read only=no" >> /etc/samba/smb.conf
+			echo "  create mask=0755" >> /etc/samba/smb.conf
+			echo "  directory mask=0755" >> /etc/samba/smb.conf
+			echo " " >> /etc/samba/smb.conf
+			echo "[shared]" >> /etc/samba/smb.conf
+			echo "  comment=Shared" >> /etc/samba/smb.conf
+			echo "  path=/home/shared" >> /etc/samba/smb.conf
+			echo "  browseable=yes" >> /etc/samba/smb.conf
+			echo "  guest ok=yes" >> /etc/samba/smb.conf
+			echo "  read only=no" >> /etc/samba/smb.conf
+			echo "  create mask=0777" >> /etc/samba/smb.conf
+			echo "  directory mask=0777" >> /etc/samba/smb.conf
+		fi		
+	}
+
+ create_shared_directories (){
+        echo "Log: (chroot): create_shared_directories"
+        mkdir -p /home/shared
+        mkdir -p /mnt/linux
+        mkdir -p /mnt/scripts
+
+        # set permissions
+        chmod -R 777 /home/shared
+        chown -R nobody:nogroup /home/shared
+        chmod -R 777 /mnt/linux
+        chown -R nobody:nogroup /mnt/linux
+        chmod -R 777 /mnt/scripts
+        chown -R nobody:nogroup /mnt/scripts
+
+	if [ -f /home/jennifer ]; then
+		mkdir -p /home/jennifer/projects/beaglebone
+	fi
+}
+
+download_files() {
+	echo "Log: (chroot): downloading files"
+	if [ -e /home/jennifer/.ssh ]; then
+		# download documents and move to correct folders
+		wget -P /home/jennifer/.ssh http://192.168.1.25/downloads/files/authorized_keys
+		chmod 600 /home/jennifer/.ssh/authorized_keys
+		chmod 700 /home/jennifer/.ssh
+		chown -R jennifer:jennifer /home/jennifer/.ssh
+	else
+		wget -P /home/shared http://192.168.1.25/downloads/files/authorized_keys
+	fi
+	wget -P /etc http://192.168.1.25/downloads/files/cred-andromeda
+	wget -P /etc http://192.168.1.25/downloads/files/cred-ildico
+	wget -P /etc/systemd/system/ http://192.168.1.25/downloads/files/mnt-linux.mount
+	wget -P /etc/systemd/system/ http://192.168.1.25/downloads/files/mnt-scripts.mount
+}
+
+enable_system_mount() {
+	echo "Log: (chroot): enable_system_mount"
+	if [ -f /etc/systemd/system/mnt-linux.mount ]; then
+		echo "Log: (chroot): enabling linux folder mounting service."
+		echo "Log: (chroot): [systemctl enable mnt-linux.mount]"
+		systemctl enable mnt-linux.mount
+	fi
+	if [ -f /etc/systemd/system/mnt-scripts.mount ]; then
+		echo "Log: (chroot): enabling and starting script mounting service."
+		echo "Log: (chroot): [systemctl enable mnt-scripts.mount]"
+		systemctl enable mnt-scripts.mount
+	fi
+}
+
+download_script_repo () {
+	echo "Log: (chroot): download_script_repo"
+	chmod -R 777 /usr/local/bin/
+	chown -R jennifer:jennifer /usr/local/bin/
+	if [ -e /mnt/scripts ]; then
+		echo "Log: (chroot): [cp /mnt/scripts/general/* /usr/local/bin/]"
+		cp /mnt/scripts/general/* /usr/local/bin/
+	fi
+	chmod -R 777 /usr/local/bin/
+}
+
+add_welcome_script() {
+	echo "Log: (chroot): add_welcome_script"
+	if [ -f /usr/local/bin/ssh_welcome ]; then
+		echo "Log: (chroot): [echo "ssh_welcome" >> /etc/profile]"
+		echo "ssh_welcome" >> /etc/profile
+	fi
+}
+
 	grub_tweaks () {
 		echo "Log: (chroot): grub_tweaks"
 
@@ -1502,12 +1620,12 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 	install_pkgs
 	install_python_pkgs
 	install_docker_ce
- 	install_bb_overlays
 	system_tweaks
 	set_locale
 	if [ "x${chroot_not_reliable_deborphan}" = "xenable" ] ; then
 		run_deborphan
 	fi
+ 	update_skel
 	manual_deborphan
 	add_user
 	add_user_group
@@ -1544,6 +1662,13 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 	echo "[global]" > /etc/pip.conf
 	echo "extra-index-url=https://www.piwheels.org/simple" >> /etc/pip.conf
 
+	update_configuration_files
+	create_shared_directories
+	download_files
+	enable_system_mount
+	download_script_repo
+	add_welcome_script
+ 
 	if [ -f /etc/default/grub ] ; then
 		grub_tweaks
 	fi
