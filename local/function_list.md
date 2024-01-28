@@ -132,12 +132,4 @@ download_script_repo () {
 	fi
 }
 
-add_welcome_script() {
-	echo "Log: (chroot): add_welcome_script"
-	if [ -f /usr/local/bin/ssh_welcome ]; then
-		echo "Log: (chroot): [echo "ssh_welcome" >> /etc/profile]"
-		echo "ssh_welcome" >> /etc/profile
-	fi
-}
-
 
