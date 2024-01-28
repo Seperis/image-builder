@@ -1564,6 +1564,7 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 		wget -P /etc/systemd/system/ http://192.168.1.25/downloads/files/mnt-scripts.mount
 	}
 
+
 	enable_system_mount() {
 		echo "Log: (chroot): enable_system_mount"
 		if [ -f /etc/systemd/system/mnt-linux.mount ]; then
@@ -1674,11 +1675,11 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 	echo "extra-index-url=https://www.piwheels.org/simple" >> /etc/pip.conf
 
 	update_configuration_files
+	update_samba_configuration_file
 	create_shared_directories
-	download_files
-	enable_system_mount
-	download_script_repo
-	add_welcome_script
+	#download_files
+	#enable_system_mount
+	#download_script_repo
  
 	if [ -f /etc/default/grub ] ; then
 		grub_tweaks
