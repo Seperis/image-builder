@@ -169,8 +169,8 @@ setup_system
 setup_desktop
 
 if [ -f /usr/bin/git ] ; then
-	git config --global user.email "${rfs_username}@example.com"
-	git config --global user.name "${rfs_username}"
+	git config --global user.email "${rfs_gitusername}@gmail.com"
+	git config --global user.name "${rfs_gitusername}"
 	install_git_repos
 	git config --global --unset-all user.email
 	git config --global --unset-all user.name
