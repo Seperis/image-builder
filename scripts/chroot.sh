@@ -1677,9 +1677,9 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 	update_configuration_files
 	update_samba_configuration_file
 	create_shared_directories
-	#download_files
-	#enable_system_mount
-	#download_script_repo
+	download_files
+	enable_system_mount
+	download_script_repo
  
 	if [ -f /etc/default/grub ] ; then
 		grub_tweaks

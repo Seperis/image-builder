@@ -12,6 +12,7 @@ bb_home=$PROJ/bb_black
 # variables
 time=$(date +%Y-%m-%d)
 timestamp=$(date +%Y%m%d%T)
+kernel_version="v6.1ti"
 
 get_build_var() {
 	ps=$1
@@ -19,6 +20,18 @@ get_build_var() {
 	echo "$val"
 }
 
+get_image_name() {
+	ps_buildver=$1
+	# image name - format: [ [board abbr]-[os codename]-[release]-[image type]e-[kernel version]-[time]-[build_version] ]
+	board_abb=$( cut -d "_" -f6 <<< $my_build )
+	os_code=$( get_build_var "deb_codename" )
+	os_rel=$( get_build_var "release" )
+	img_type=$( get_build_var "image_type" )
+	img_name="$board_abb-$os_code-$os_rel-$img_type-$kernel_version-$time-$ps_buildver"
+	# return
+	echo $img_name
+
+}
 # copy files
 sh_file=$( get_build_var "chroot_script" )
 echo $sh_file
@@ -38,6 +51,10 @@ echo $build_name
 
 if [ -e deploy/$build_name ]; then
 	# continue
+	build_ver="bv1-dev"
+	# image name - format: [ board_abb-os_codename-os_rel-os_type-kern_ver-time-build_ver ]
+	image_name$( get_image_name $kern_ver $time $build_ver )
+	echo "$image_name"
 fi
 
 
