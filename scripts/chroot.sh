@@ -1575,7 +1575,7 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 		if [ -f /etc/systemd/system/mnt-scripts.mount ]; then
 			echo "Log: (chroot): enabling and starting script mounting service."
 			systemctl enable mnt-scripts.mount || true
-			systemctl start mnt-linu.mount || true
+			systemctl start mnt-scripts.mount || true
 		fi
 	}
 
