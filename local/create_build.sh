@@ -16,8 +16,14 @@ PROJ=/home/jennifer/projects/beaglebone
 play_home=$PROJ/beagle_play
 bb_home=$PROJ/bb_black 
 
+get_build_var() {
+	ps=$1
+	val=$( cat "my_build" | grep -w "$ps" | cut -d "=" -f2 | sed -e 's/\"//g' )
+	echo "$val"
+}
 # os name - options: debian ubuntu
-os_name="debian"
+#os_name="debian"
+os_name=$(get_build_var "deb_distribution")
 
 get_osversion(){
 	ps_bd=$1
@@ -89,7 +95,8 @@ time=$(date +%Y-%m-%d)
 timestamp=$(date +%Y%m%d%T)
 
 # copy sh and configs
-board_arch=$( cut -d "_" -f1 <<< $my_build )
+#board_arch=$( cut -d "_" -f1 <<< $my_build )
+board_arch=$( get_build_var "deb_arch" )
 if [ "$board_arch" = "armhf" ]; then
 	my_sh=armhf_bkwm_custom-debian.sh 
 else
@@ -97,21 +104,23 @@ else
 fi
 
 # copy files
-cp local/$my_build.conf configs/custom-debian.conf
-cp local/$my_sh target/chroot/custom-debian.sh
-echo "Copy complete"
+#cp local/$my_build.conf configs/custom-debian.conf
+#cp local/$my_sh target/chroot/custom-debian.sh
+#echo "Copy complete"
 
 # run builder
 echo
 echo "Starting RootStock-NG.sh"
-sudo ./RootStock-NG.sh -c custom-debian 2>&1 | tee build.log
+#sudo ./RootStock-NG.sh -c custom-debian 2>&1 | tee build.log
 echo
 echo "RootStock-NG done"
 
 # deploy folder - format: [operating system]-[release number]-[os version]-[board architecture]-[date]
-os_rel=$( cut -d "_" -f4 <<< $my_build )
-os_version=$( get_osversion "$my_build" )
-dep_name="$os_name-$os_rel-$os_version-$board_arch-$time"
+#os_rel=$( cut -d "_" -f4 <<< $my_build )
+os_rel=$( get_build_var "release" )
+#os_version=$( get_osversion "$my_build" )
+image_type=$( get_build_var "image_type" )
+dep_name="$os_name-$os_rel-$image_type-$board_arch-$time"
 
 echo
 echo "deploy/$dep_name"
@@ -120,8 +129,9 @@ if [ -d deploy/$dep_name ]; then
 	# log
 	log="${OIB_DIR}/sdcard.log"
 	# name variables
-	board_ac=$( cut -d "_" -f6 <<< $my_build )
+	#board_ac=$( cut -d "_" -f6 <<< $my_build )
 	os_codename=$( get_oscodename )
+	os_codename=$( get_build_var "deb_codename" )
 	kern_ver=$( cut -d "_" -f5 <<< $my_build )
 	build_ver="bv1-dev"
 	# image name - format: [ board_ac-os_codename-os_rel-os_type-kern_ver-date-build_ver ]
@@ -131,7 +141,7 @@ if [ -d deploy/$dep_name ]; then
 	opt_tags=$( get_option_tags $board_ac )
 	
 	# sd
-	echo
+z	echo
 	echo "SD Card"
 	echo "setup_sdcard.sh $size_tag $img_name $opt_tags 2>&1 | tee $log"
 	if [ -f "${OIB_DIR}/deploy/$dep_name/setup_sdcard.sh" ]; then
