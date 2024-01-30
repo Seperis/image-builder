@@ -1441,12 +1441,19 @@ populate_rootfs () {
 		#https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/scripts/Makefile.dtbinst?h=v6.5-rc1#n37
 		#copy these under /boot/dtbs/${version}/overlays/ for older versions of u-boot.
 		if [ "x${kernel_override}" = "x" ] ; then
+			echo "Log: (sdcard.sh): Starting DTS No Override"
 			if [ -d ${TEMPDIR}/disk/boot/dtbs/${select_kernel}/ ] ; then
+				echo "Log: (sdcard.sh): dtbs of ${select_kernel} exists."
+				dtbs_dir=$( ls ${TEMPDIR}/disk/boot/dtbs/${select_kernel}/ )
+				echo "Log: (sdcard.sh): contents of dtbs"
+				echo "$dtbs_dir"
 				mkdir -p ${TEMPDIR}/disk/boot/dtbs/${select_kernel}/overlays/ || true
 				cp -v ${TEMPDIR}/disk/boot/dtbs/${select_kernel}/*.dtbo ${TEMPDIR}/disk/boot/dtbs/${select_kernel}/overlays/
 			fi
 		else
+			echo "Log: (sdcard.sh): Starting DTS With Override"
 			if [ -d ${TEMPDIR}/disk/boot/dtbs/${kernel_override}/ ] ; then
+				echo "Log: (sdcard.sh): dtbs of ${kernel_override} exists."
 				mkdir -p ${TEMPDIR}/disk/boot/dtbs/${kernel_override}/overlays/ || true
 				cp -v ${TEMPDIR}/disk/boot/dtbs/${kernel_override}/*.dtbo ${TEMPDIR}/disk/boot/dtbs/${kernel_override}/overlays/
 			fi

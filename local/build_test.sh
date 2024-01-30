@@ -175,7 +175,7 @@ fi
 if [ "$flag" = "yes" ]; then
 	# continue
 	sdlog="${OIB_DIR}/sdcard.log"
-	build_ver="bv1-dev"
+	build_ver="bv1dev"
 	timestamp="_$date"
 
 	# get image size for tag
@@ -209,6 +209,7 @@ if [ "$flag" = "yes" ]; then
 	echo "Log: image name is $image_name"
 
 	cd deploy/$build_name
+	work_dir="${OIB_DIR}/deploy/$build_name"
 	echo "Log: Staring setup_sdcard.sh"
 	echo "Log: [sudo ./setup_sdcard.sh --img-${size_tag} $image_name $opt_tags 2>&1 | tee $sdlog]"
 	sudo ./setup_sdcard.sh --img-${size_tag} $image_name $opt_tags 2>&1 | tee $sdlog
@@ -216,9 +217,9 @@ if [ "$flag" = "yes" ]; then
 	# get image file 
 	my_image="$image_name-${size_tag}.img"
 	# validating image creation
-	if [ ! -f "${OIB_DIR}/$my_image" ]; then
+	if [ ! -f "$work_dir$build_name$my_image" ]; then
 		echo "Debug: $my_image does not exist or that is not the correct name."
-		echo "Debug: ${OIB_DIR}/$my_image"
+		echo "Debug: $work_dir/$my_image"
 		echo "Debug: $my_image"
 		flag="no"
 	else
@@ -236,9 +237,9 @@ if [ "$flag" = "yes" ]; then
 	echo "Log: compression complete"
 	comp_image="$my_image".xz
 	# validating compression
-	if [ -! -f "${OIB_DIR}/$comp_image" ]; then
+	if [ -! -f "$work_dir/$comp_image" ]; then
 		echo "Debug: $comp_image does not exist or the name is wrong"
-		echo "Debug: ${OIB_DIR}/$comp_image"
+		echo "Debug: $work_dir/$comp_image"
 		echo "Debug: $comp_image"
 		flag="no"
 	else
@@ -249,40 +250,40 @@ if [ "$flag" = "yes" ]; then
 fi
 
 # clean up
-if [ "$flag" = "yes" ]; then
-	echo "Log: copying image to image folder"
-	echo "Log: [cp ${OIB_DIR}/$comp_image $PROJ/images/$comp_image]"
-	cp "${OIB_DIR}/$comp_image" "$PROJ/images/$comp_image"
-	# validate copy
-	if [ ! -f "$PROJ/images/$comp_image" ]; then
-		echo "Debug: $comp_image was not copied successfully"
-		echo "Debug: $PROJ/images/$comp_image"
-		flag="no"
-	else
-		echo "Log: $comp_image was copied successfully to $PROJ/images."
-	fi
-fi
+#if [ "$flag" = "yes" ]; then
+#	echo "Log: copying image to image folder"
+#	echo "Log: [cp ${OIB_DIR}/$comp_image $PROJ/images/$comp_image]"
+#	cp "${OIB_DIR}/$comp_image" "$PROJ/images/$comp_image"
+#	# validate copy
+#	if [ ! -f "$PROJ/images/$comp_image" ]; then
+#		echo "Debug: $comp_image was not copied successfully"
+#		echo "Debug: $PROJ/images/$comp_image"
+#		flag="no"
+#	else
+#		echo "Log: $comp_image was copied successfully to $PROJ/images."
+#	fi
+#fi
 
 # moving log files
-if [ "$flag" = "yes" ]; then
-	lext="$my_build$timestamp.log"
-	echo "Log: copying log files to board folder"
-	echo "Log: [cp ${OIB_DIR}/build.log $board_home/build_$lext]"
-	cp "${OIB_DIR}/build.log" "$board_home/build_$lext"
-	# validate copy
-	if [ ! -f "$board_home/build_$lext" ]; then
-		echo "Debug: build.log was not copied successfully."
-	else
-		echo "Log: build.log was copied successfully to $board_home."
-	fi
-	echo "Log: [cp ${OIB_DIR}/sdcard.log $board_home/sdcard_$lext]"
-	cp "${OIB_DIR}/sdcard.log" "$board_home/sdcard_$lext"
-	if [ ! -f "$board_home/sdcard_$mlext" ]; then
-		echo "Debug: sdcard.log was not copied successfully."
-	else
-		echo "Log: sdcard.log was copied successfully to $board_home."
-	fi
-fi
+#if [ "$flag" = "yes" ]; then
+#	lext="$my_build$timestamp.log"
+#	echo "Log: copying log files to board folder"
+#	echo "Log: [cp ${OIB_DIR}/build.log $board_home/build_$lext]"
+#	cp "${OIB_DIR}/build.log" "$board_home/build_$lext"
+#	# validate copy
+#	if [ ! -f "$board_home/build_$lext" ]; then
+#		echo "Debug: build.log was not copied successfully."
+#	else
+#		echo "Log: build.log was copied successfully to $board_home."
+#	fi
+#	echo "Log: [cp ${OIB_DIR}/sdcard.log $board_home/sdcard_$lext]"
+#	cp "${OIB_DIR}/sdcard.log" "$board_home/sdcard_$lext"
+#	if [ ! -f "$board_home/sdcard_$mlext" ]; then
+#		echo "Debug: sdcard.log was not copied successfully."
+#	else
+#		echo "Log: sdcard.log was copied successfully to $board_home."
+#	fi
+#fi
 
 if [ "$flag" = "no" ]; then
 	echo "There were problems during script execution. Check to see what they were."
