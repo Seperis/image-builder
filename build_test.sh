@@ -18,7 +18,7 @@ date=$(date +%Y%m%d%T)
 
 # build array
 arr=( "arm64_xfce_bkwm_12.4_v5.10ti_play" "arm64_min_bkwm_12.4_v6.1ti_play" "arm64_xfce_bkwm_12.4_v6.1ti_play" \
-		"armhf_iot_bkwm_12.4_v5_10ti_bone" "armhf_iot_bkwm_12.4_v6.1ti_bone" "armhf_min_bkwm_12.4_v6.1ti_bone" )
+		"armhf_iot_bkwm_12.4_v5.10ti_bone" "armhf_iot_bkwm_12.4_v6.1ti_bone" "armhf_min_bkwm_12.4_v6.1ti_bone" )
 
 echo "Log: starting log for build_test.sh"
 echo "Log: selecting build to create."
@@ -45,8 +45,8 @@ else
 	else
 		echo "Log: $my_build is a valid build selection"
 		# set kernel and board variables
-		kernel_version=$( cut -d "_" -f5 <<< $my_build )
-		board_abbr=$( cut -d "_" -f6 <<< $my_build )
+		kernel_version=$( cut -d "_" -f5 <<< "$my_build" )
+		board_abbr=$( cut -d "_" -f6 <<< "$my_build" )
 	fi
 fi
 
@@ -181,7 +181,7 @@ if [ "$flag" = "yes" ]; then
 	# get image size for tag
 	echo "Log: getting size tag for setup_sdcard.sh"
 	size_tag=$( get_size_tag )
-	if [ -z "$size_tag" ]l then
+	if [ -z "$size_tag" ]; then
 		echo "Debug: tag was empty. Using default value 8gb"
 		size_tag="8gb"
 	fi
