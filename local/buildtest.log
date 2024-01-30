@@ -1,0 +1,16 @@
+Log: starting log for build_test.sh
+Log: selecting build to create.
+
+Select build:
+1. arm64_xfce_bkwm_12.4_v5.10ti_play
+2. arm64_min_bkwm_12.4_v6.1ti_play
+3. arm64_xfce_bkwm_12.4_v6.1ti_play
+4. armhf_iot_bkwm_12.4_v5.10ti_bone
+5. armhf_min_bkwm_12.4_v6.1ti_bone
+6. armhf_iot_bkwm_12.4_v6.1ti_bone
+Your selection: Log: armhf_iot_bkwm_12.4_v5.10ti_bone is a valid build selection
+Debug: local/armhf_iot_bkwm_12.4_v5.10ti_bone.conf does not exist
+Debug: armhf_iot_bkwm_12.4_v5.10ti_bone
+Debug: armhf_iot_bkwm_12.4_v5.10ti_bone.conf
+./build_test.sh: line 187: syntax error near unexpected token `fi'
+./build_test.sh: line 187: `	fi'
