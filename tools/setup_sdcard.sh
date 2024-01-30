@@ -1186,7 +1186,7 @@ populate_rootfs () {
 				echo "#uboot_overlay_addr7=<file7>.dtbo" >> ${wfile}
 				echo "###" >> ${wfile}
 				echo "###Custom Cape" >> ${wfile}
-				echo "dtb_overlay=/lib/firmware/BB-GATEWAY-WL1837-00A0.dtbo" >> ${wfile}
+				echo "#<file>.dtbo" >> ${wfile}
 				echo "###" >> ${wfile}
 				echo "###Debug: disable uboot autoload of Cape" >> ${wfile}
 				echo "#disable_uboot_overlay_addr0=1" >> ${wfile}
@@ -1437,6 +1437,10 @@ populate_rootfs () {
 
 		echo "/boot/uEnv.txt---------------"
 
+		if [ "x${conf_board}" = "xam335x_boneblack" ] || [ "x${conf_board}" = "xam335x_evm" ] || [ "x${conf_board}" = "xam335x_blank_bbbw" ] ; then
+			echo "Testing skip"
+		else
+
 		#Starting in v6.5, overlays/dtbo files get dumped in the same directory as dtb's CONFIG_ARCH_WANT_FLAT_DTB_INSTALL
 		#https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/scripts/Makefile.dtbinst?h=v6.5-rc1#n37
 		#copy these under /boot/dtbs/${version}/overlays/ for older versions of u-boot.
@@ -1457,6 +1461,7 @@ populate_rootfs () {
 				mkdir -p ${TEMPDIR}/disk/boot/dtbs/${kernel_override}/overlays/ || true
 				cp -v ${TEMPDIR}/disk/boot/dtbs/${kernel_override}/*.dtbo ${TEMPDIR}/disk/boot/dtbs/${kernel_override}/overlays/
 			fi
+		fi
 		fi
 	fi
 

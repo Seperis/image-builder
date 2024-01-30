@@ -219,7 +219,7 @@ if [ "$flag" = "yes" ]; then
 	# get image file 
 	my_image="$image_name-${size_tag}.img"
 	# validating image creation
-	if [ ! -f "$work_dir$build_name$my_image" ]; then
+	if [ ! -f "$work_dir/$my_image" ]; then
 		echo "Debug: $my_image does not exist or that is not the correct name."
 		echo "Debug: $work_dir/$my_image"
 		echo "Debug: $my_image"

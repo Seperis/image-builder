@@ -82,16 +82,6 @@ git_clone_full () {
 }
 
 setup_system () {
-	#For when sed/grep/etc just gets way to complex...
-	cd /
-	#make the sound card work by default
-	if [ -f /etc/alsa/tlv320aic3104.state.txt ] ; then
-		if [ -d /var/lib/alsa/ ] ; then
-			cp -v /etc/alsa/tlv320aic3104.state.txt /var/lib/alsa/asound.state
-			cp -v /etc/alsa/tlv320aic3104.conf.txt /etc/asound.conf
-		fi
-	fi
-
 	if [ -f /var/www/html/index.nginx-debian.html ] ; then
 		if [ -f /etc/bbb.io/templates/nginx/nginx-autoindex ] ; then
 			rm -f /etc/nginx/sites-enabled/default || true
@@ -103,32 +93,6 @@ setup_system () {
 }
 
 setup_desktop () {
-	if [ -d /etc/X11/ ] ; then
-		wfile="/etc/X11/xorg.conf"
-		echo "Patching: ${wfile}"
-		echo "Section \"Monitor\"" > ${wfile}
-		echo "        Identifier      \"Builtin Default Monitor\"" >> ${wfile}
-		echo "EndSection" >> ${wfile}
-		echo "" >> ${wfile}
-		echo "Section \"Device\"" >> ${wfile}
-		echo "        Identifier      \"Builtin Default fbdev Device 0\"" >> ${wfile}
-		echo "        Driver          \"fbdev\"" >> ${wfile}
-		echo "#HWcursor_false        Option          \"HWcursor\"          \"false\"" >> ${wfile}
-		echo "EndSection" >> ${wfile}
-		echo "" >> ${wfile}
-		echo "Section \"Screen\"" >> ${wfile}
-		echo "        Identifier      \"Builtin Default fbdev Screen 0\"" >> ${wfile}
-		echo "        Device          \"Builtin Default fbdev Device 0\"" >> ${wfile}
-		echo "        Monitor         \"Builtin Default Monitor\"" >> ${wfile}
-		echo "#DefaultDepth        DefaultDepth    16" >> ${wfile}
-		echo "EndSection" >> ${wfile}
-		echo "" >> ${wfile}
-		echo "Section \"ServerLayout\"" >> ${wfile}
-		echo "        Identifier      \"Builtin Default Layout\"" >> ${wfile}
-		echo "        Screen          \"Builtin Default fbdev Screen 0\"" >> ${wfile}
-		echo "EndSection" >> ${wfile}
-	fi
-
 	if [ -f /etc/bbb.io/templates/xfce4/xfce4-desktop.xml ] ; then
 		mkdir -p /home/${rfs_username}/.config/xfce4/xfconf/xfce-perchannel-xml/ || true
 		cp -v /etc/bbb.io/templates/xfce4/xfce4-desktop.xml /home/${rfs_username}/.config/xfce4/xfconf/xfce-perchannel-xml/
@@ -144,28 +108,28 @@ setup_desktop () {
 	echo "xset s off" >> ${wfile}
 	echo "xsetroot -cursor_name left_ptr" >> ${wfile}
 	chown -R ${rfs_username}:${rfs_username} ${wfile}
+
+	if [ -f /usr/sbin/wpa_gui ] ; then
+		mkdir -p /home/${rfs_username}/Desktop/ || true
+		chown -R ${rfs_username}:${rfs_username} /home/${rfs_username}/Desktop/
+
+		wfile="/home/${rfs_username}/Desktop/wpa_gui.desktop"
+		echo "[Desktop Entry]" > ${wfile}
+		echo "Version=1.0" >> ${wfile}
+		echo "Name=wpa_gui" >> ${wfile}
+		echo "Comment=Graphical user interface for wpa_supplicant" >> ${wfile}
+		echo "Exec=wpa_gui" >> ${wfile}
+		echo "Icon=wpa_gui" >> ${wfile}
+		echo "GenericName=wpa_supplicant user interface" >> ${wfile}
+		echo "Terminal=false" >> ${wfile}
+		echo "Type=Application" >> ${wfile}
+		echo "Categories=Qt;Network;" >> ${wfile}
+		chown -R ${rfs_username}:${rfs_username} ${wfile}
+		chmod +x ${wfile}
+	fi
 }
 
 install_git_repos () {
-	#if [ -f /usr/bin/make ] ; then
-	#	echo "Installing pip packages"
-	#	git_repo="https://github.com/adafruit/adafruit-beaglebone-io-python.git"
-	#	git_target_dir="/opt/source/adafruit-beaglebone-io-python"
-	#	git_clone
-	#	if [ -f ${git_target_dir}/.git/config ] ; then
-	#		cd ${git_target_dir}/
-	#		sed -i -e 's:4.1.0:3.4.0:g' setup.py || true
-	#		if [ -f /usr/bin/python3 ] ; then
-	#			python3 setup.py install || true
-	#		fi
-	#		git reset HEAD --hard || true
-	#	fi
-	#fi
-
-	if [ -f /var/www/html/index.nginx-debian.html ] ; then
-		rm -rf /var/www/html/index.nginx-debian.html || true
-	fi
-
 	git_repo="https://openbeagle.org/beagleboard/BeagleBoard-DeviceTrees.git"
 	git_target_dir="/opt/source/dtb-5.10-ti"
 	git_branch="v5.10.x-ti-unified"
@@ -176,24 +140,18 @@ install_git_repos () {
 	git_branch="v6.1.x-Beagle"
 	git_clone_branch
 
-	echo "Log (debian): Cloning bb-org-overlays"
-	git_repo="https://github.com/beagleboard/bb.org-overlays"
-	git_target_dir="/opt/source/bb.org-overlays"
-	git_clone
+	git_repo="https://openbeagle.org/beagleboard/BeagleBoard-DeviceTrees.git"
+	git_target_dir="/opt/source/dtb-6.6"
+	git_branch="v6.6.x"
+	git_clone_branch
 
-	git_repo="https://github.com/mvduin/bbb-pin-utils"
-	git_target_dir="/opt/source/bbb-pin-utils"
-	git_clone
-	if [ -d /opt/source/bbb-pin-utils/ ] ; then
-		ln -s /opt/source/bbb-pin-utils/show-pins /usr/local/sbin/
-	fi
+	git_repo="https://openbeagle.org/beagleboard/BeagleBoard-DeviceTrees.git"
+	git_target_dir="/opt/source/dtb-6.7"
+	git_branch="v6.7.x"
+	git_clone_branch
 
 	git_repo="https://github.com/mvduin/py-uio"
 	git_target_dir="/opt/source/py-uio"
-	git_clone
-
-	git_repo="https://github.com/mvduin/overlay-utils"
-	git_target_dir="/opt/source/overlay-utils"
 	git_clone
 
 	git_repo="https://github.com/rm-hull/spidev-test"
