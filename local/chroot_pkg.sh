@@ -996,7 +996,7 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 
 	custom_pkg_installation(){
 		echo "Log: (chroot): custom_pkg_installation"
-		if [ "x${deb_arch}" = "armhf" ]; then
+		if [ "x${deb_arch} = "armhf" ]; then
 			echo "Log: (chroot) starting install"
 			touch /etc/apt/source.list.d/beagle2.list
 			install_bb_pkgs_bullseye
@@ -1020,8 +1020,8 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 
 	install_bb_pkgs_arm64(){
 		echo "Log: (chroot): install_bb_pkgs_arm64"
-        echo "deb [arch=arm64 signed-by=${rcnee_keyring}] http://${repo_rcnee_mirror}/${rcnee_url_directory}/ ${deb_codename} main" >> /etc/apt/sources.list.d/beagle2.list
-        echo "#deb-src [arch=arm64 signed-by=${rcnee_keyring}] http://${repo_rcnee_mirror}/${rcnee_url_directory}/ ${deb_codename} main" >> /etc/apt/sources.list.d/beagle2.list
+        echo "deb [arch=arm64 signed-by=${rcnee_keyring}] http://${repo_rcnee_mirror}/${rcnee_url_directory}/ bullseye main" >> /etc/apt/sources.list.d/beagle2.list
+        echo "#deb-src [arch=arm64 signed-by=${rcnee_keyring}] http://${repo_rcnee_mirror}/${rcnee_url_directory}/ bullseye main" >> /etc/apt/sources.list.d/beagle2.list
         apt-get update || true
         echo "Log: (chroot): installing"
         apt-get install -y bbb.io-xfce4-desktop || true
