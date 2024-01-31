@@ -1004,6 +1004,7 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 				install_bb_pkgs_arm64
 			fi
 			cp /etc/apt/sources.list.d/beagle2.list /etc/apt/sources.list.d/beagle.list || true
+   			rm /etc/apt/sources.list.d/beagle2.list
 			apt-get update || true
 		fi
 	}
