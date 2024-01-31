@@ -30,14 +30,14 @@ echo "1. arm64_xfce_bkwm_12.4_v5.10ti_play"
 echo "2. arm64_min_bkwm_12.4_v6.1ti_play"
 echo "3. arm64_xfce_bkwm_12.4_v6.1ti_play"
 echo "4. arm64_xfce_bkwm_12.4_v6.7k3_play"
-echo "4. armhf_xfce_bkwm_12.4_v5.10ti_bone"
-echo "5. armhf_iot_bkwm_12.4_v5.10ti_all"
-echo "6. armhf_iot_bkwm_12.4_v5.10ti_bone"
-echo "7. armhf_iot_bkwm_12.4_v6.1ti_bone"
-echo "8. armhf_min_bkwm_12.4_v6.1ti_bone"
+echo "5. armhf_xfce_bkwm_12.4_v5.10ti_bone"
+echo "6. armhf_iot_bkwm_12.4_v5.10ti_all"
+echo "7. armhf_iot_bkwm_12.4_v5.10ti_bone"
+echo "8. armhf_iot_bkwm_12.4_v6.1ti_bone"
+echo "9. armhf_min_bkwm_12.4_v6.1ti_bone"
 read -r -p "Your selection: " var_build
 # validate
-if [ $var_build -eq 0 ] || [ $var_build -gt 8 ]; then
+if [ $var_build -eq 0 ] || [ $var_build -gt 9 ]; then
 	echo "Debug: that is not a valid build number"
 	flag="no"
 else
@@ -254,12 +254,11 @@ if [ "$flag" = "yes" ]; then
 		comp_image_size=$( stat -c %s "$comp_image" )
 		echo "Log: $comp_image $comp_image_size B"
 		echo
-		echo "*************************************************************************"
-		echo "***** Build: $build_folder"
-		echo "***** Image: $my_image"
-		echo "***** Compr: $comp_image"
-		echo "***** Loc: deploy/$build_folder"
-		echo "*************************************************************************"
+  		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+		echo "~~ Build: deploy/$build_name"
+		echo "~~ Image File: $my_image"
+		echo "~~ Compressed: $comp_image"
+		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	fi
 fi
 
@@ -292,7 +291,7 @@ if [ "$flag" = "yes" ]; then
 	fi
 	echo "Log: [cp ${OIB_DIR}/sdcard.log $board_home/sdcard_$lext]"
 	cp "${OIB_DIR}/sdcard.log" "$board_home/sdcard_$lext"
-	if [ ! -f "$board_home/sdcard_$mlext" ]; then
+	if [ ! -f "$board_home/sdcard_$lext" ]; then
 		echo "Debug: sdcard.log was not copied successfully."
 	else
 		echo "Log: sdcard.log was copied successfully to $board_home."
@@ -302,8 +301,7 @@ fi
 if [ "$flag" = "no" ]; then
 	echo "There were problems during script execution. Check to see what they were."
 fi
-echo "Log: build_test.sh complete"
-
+echo "Log: Image build complete complete"
 # log
 log_date=$(date +%m/%d/%Y); # log date
 log_time=$(date +%T); # log time
