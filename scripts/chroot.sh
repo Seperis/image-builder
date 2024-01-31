@@ -1717,7 +1717,7 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 	create_shared_directories
 	download_files
 	enable_system_mount
-	download_script_repo
+	#download_script_repo - need to make this a startup script
  
 	if [ -f /etc/default/grub ] ; then
 		grub_tweaks
