@@ -18,7 +18,7 @@ date=$(date +%Y%m%d%T)
 
 # build array
 arr=( "arm64_xfce_bkwm_12.4_v5.10ti_play" "arm64_min_bkwm_12.4_v6.1ti_play" "arm64_xfce_bkwm_12.4_v6.1ti_play" \
-		"arm64_xfce_bkwm_12.4_v6.7k3_play" \
+		"arm64_xfce_bkwm_12.4_v6.7k3_play" "arm64_min_bkwm_12.4_vML_play" \
 		"armhf_xfce_bkwm_12.4_v5.10ti_bone" "armhf_iot_bkwm_12.4_v5.10ti_all" "armhf_iot_bkwm_12.4_v5.10ti_bone" \
 		"armhf_iot_bkwm_12.4_v6.1ti_bone" "armhf_min_bkwm_12.4_v6.1ti_bone" )
 
@@ -30,14 +30,15 @@ echo "1. arm64_xfce_bkwm_12.4_v5.10ti_play"
 echo "2. arm64_min_bkwm_12.4_v6.1ti_play"
 echo "3. arm64_xfce_bkwm_12.4_v6.1ti_play"
 echo "4. arm64_xfce_bkwm_12.4_v6.7k3_play"
-echo "5. armhf_xfce_bkwm_12.4_v5.10ti_bone"
-echo "6. armhf_iot_bkwm_12.4_v5.10ti_all"
-echo "7. armhf_iot_bkwm_12.4_v5.10ti_bone"
-echo "8. armhf_iot_bkwm_12.4_v6.1ti_bone"
-echo "9. armhf_min_bkwm_12.4_v6.1ti_bone"
+ech0 "5. arm64_min_bkwm_12.4_vML_play"
+echo "6. armhf_xfce_bkwm_12.4_v5.10ti_bone"
+echo "7. armhf_iot_bkwm_12.4_v5.10ti_all"
+echo "8. armhf_iot_bkwm_12.4_v5.10ti_bone"
+echo "9. armhf_iot_bkwm_12.4_v6.1ti_bone"
+echo "10. armhf_min_bkwm_12.4_v6.1ti_bone"
 read -r -p "Your selection: " var_build
 # validate
-if [ $var_build -eq 0 ] || [ $var_build -gt 9 ]; then
+if [ $var_build -eq 0 ] || [ $var_build -gt 10 ]; then
 	echo "Debug: that is not a valid build number"
 	flag="no"
 else
