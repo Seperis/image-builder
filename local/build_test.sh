@@ -240,7 +240,7 @@ if [ "$flag" = "yes" ]; then
 	echo "Log: compression complete"
 	comp_image="$my_image".xz
 	# validating compression
-	if [ -! -f "$work_dir/$comp_image" ]; then
+	if [ ! -f "$work_dir/$comp_image" ]; then
 		echo "Debug: $comp_image does not exist or the name is wrong"
 		echo "Debug: $work_dir/$comp_image"
 		echo "Debug: $comp_image"
