@@ -1597,6 +1597,25 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 		echo "Log: (chroot): downloading .mount files to systemd"
 		wget -P /etc/systemd/system/ http://192.168.1.25/downloads/files/mnt-linux.mount
 		wget -P /etc/systemd/system/ http://192.168.1.25/downloads/files/mnt-scripts.mount
+  		echo "Log: (chroot): downloading scripts to script bin"
+  		wget -P /usr/local/bin http://192.168.1.25/downloads/files/allcolors
+    	wget -P /usr/local/bin http://192.168.1.25/downloads/files/formatScript
+	 	wget -P /usr/local/bin http://192.168.1.25/downloads/files/hardware_info
+  		wget -P /usr/local/bin http://192.168.1.25/downloads/files/ipa_status
+    	wget -P /usr/local/bin http://192.168.1.25/downloads/files/lib_comp
+	 	wget -P /usr/local/bin http://192.168.1.25/downloads/files/ssh_text
+   		wget -P /usr/local/bin http://192.168.1.25/downloads/files/ssh_welcome
+	 	echo "Log: (chroot): setting permissions"
+   		chown -R ${rfs_username}:${rfs_username /usr/local/bin
+	 	chmod 755 /usr/local/bin
+   		if [ -e /usr/local/bin/ssh_welcome ]; then
+			echo "Log: (chroot): scripts added successfully"
+			echo "Log: (chroot): copy ssh_welcome to /etc/profile"
+			echo "# ssh welcome banner" >> /etc/profile
+			echo "ssh_welcome" >> /etc/profile
+		else
+			echo "Log: (chroot): scripts did not copy successfully"
+		fi
 	}
 
 
@@ -1605,32 +1624,10 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 		if [ -f /etc/systemd/system/mnt-linux.mount ]; then
 			echo "Log: (chroot): enabling linux folder mounting service."
 			systemctl enable mnt-linux.mount || true
-			systemctl start mnt-linux.mount || true
 		fi
 		if [ -f /etc/systemd/system/mnt-scripts.mount ]; then
 			echo "Log: (chroot): enabling and starting script mounting service."
 			systemctl enable mnt-scripts.mount || true
-			systemctl start mnt-scripts.mount || true
-		fi
-	}
-
-	download_script_repo () {
-		echo "Log: (chroot): download_script_repo"
-		if [ -e /mnt/scripts/general ]; then
-			echo "Log: (chroot): [cp /mnt/scripts/general/* /usr/local/bin/]"
-			cp /mnt/scripts/general/* /usr/local/bin/
-			if [ -e /usr/local/bin/ssh_welcome ]; then
-				echo "Log: (chroot): scripts added successfully"
-				chown -R  ${rfs_username}:${rfs_username} /usr/local/bin/
-				chmod -R 777 /usr/local/bin/
-				echo "Log: (chroot): copy ssh_welcome to /etc/profile"
-				echo "# ssh welcome banner" >> /etc/profile
-				echo "ssh_welcome" >> /etc/profile
-			else
-				echo "Log: (chroot): scripts did not copy successfully"
-			fi
-		else
-			echo "Log: (chroot): script repo was not available"
 		fi
 	}
 
