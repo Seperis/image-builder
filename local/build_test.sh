@@ -193,11 +193,13 @@ if [ "$flag" = "yes" ]; then
 	# get option tags
 	echo "Log: getting option tags for setup_sdcard.sh  and home folder of board"
 	if [ "$board_abbr" = "play" ]; then
-		opt_tags="--dtb beagleplay --boot_label BEAGLEPLAY --rootfs_label PLAY"
+		opt_tags="--dtb beagleplay --boot_label BEAGLEPLAY --rootfs_label PLAY --distro-bootloader --hostname medusa"
 		board_home="$play_home"
+		board_model="Beagleplay"
 	else
-		opt_tags="--dtb beaglebone --boot_label BEAGLEBONE --rootfs_label BONE"
+		opt_tags="--dtb beaglebone --boot_label BEAGLEBONE --rootfs_label BONE --hostname circe"
 		board_home="$bb_home"
+		board_model="BeagleBone Black"
 	fi
 	echo "Log: option tags are $opt_tags"
 	echo "Log: board home folder is $board_home"
@@ -249,47 +251,60 @@ if [ "$flag" = "yes" ]; then
 		echo "Log: $comp_image created successfully."
 		comp_image_size=$( stat -c %s "$comp_image" )
 		echo "Log: $comp_image $comp_image_size B"
+		echo
+		echo "*************************************************************************"
+		echo "***** Build: $build_folder"
+		echo "***** Image: $my_image"
+		echo "***** Compr: $comp_image"
+		echo "***** Loc: deploy/$build_folder"
+		echo "*************************************************************************"
 	fi
 fi
 
 # clean up
-#if [ "$flag" = "yes" ]; then
-#	echo "Log: copying image to image folder"
-#	echo "Log: [cp ${OIB_DIR}/$comp_image $PROJ/images/$comp_image]"
-#	cp "${OIB_DIR}/$comp_image" "$PROJ/images/$comp_image"
-#	# validate copy
-#	if [ ! -f "$PROJ/images/$comp_image" ]; then
-#		echo "Debug: $comp_image was not copied successfully"
-#		echo "Debug: $PROJ/images/$comp_image"
-#		flag="no"
-#	else
-#		echo "Log: $comp_image was copied successfully to $PROJ/images."
-#	fi
-#fi
+if [ "$flag" = "yes" ]; then
+	echo "Log: copying image to image folder"
+	echo "Log: [cp $work_dir/$comp_image $PROJ/images/$comp_image]"
+	cp "$work_dir/$comp_image" "$PROJ/images/$comp_image"
+	# validate copy
+	if [ ! -f "$PROJ/images/$comp_image" ]; then
+		echo "Debug: $comp_image was not copied successfully"
+		echo "Debug: $PROJ/images/$comp_image"
+		flag="no"
+	else
+		echo "Log: $comp_image was copied successfully to $PROJ/images."
+	fi
+fi
 
 # moving log files
-#if [ "$flag" = "yes" ]; then
-#	lext="$my_build$timestamp.log"
-#	echo "Log: copying log files to board folder"
-#	echo "Log: [cp ${OIB_DIR}/build.log $board_home/build_$lext]"
-#	cp "${OIB_DIR}/build.log" "$board_home/build_$lext"
-#	# validate copy
-#	if [ ! -f "$board_home/build_$lext" ]; then
-#		echo "Debug: build.log was not copied successfully."
-#	else
-#		echo "Log: build.log was copied successfully to $board_home."
-#	fi
-#	echo "Log: [cp ${OIB_DIR}/sdcard.log $board_home/sdcard_$lext]"
-#	cp "${OIB_DIR}/sdcard.log" "$board_home/sdcard_$lext"
-#	if [ ! -f "$board_home/sdcard_$mlext" ]; then
-#		echo "Debug: sdcard.log was not copied successfully."
-#	else
-#		echo "Log: sdcard.log was copied successfully to $board_home."
-#	fi
-#fi
+if [ "$flag" = "yes" ]; then
+	lext="$my_build$timestamp.log"
+	echo "Log: copying log files to board folder"
+	echo "Log: [cp ${OIB_DIR}/build.log $board_home/build_$lext]"
+	cp "${OIB_DIR}/build.log" "$board_home/build_$lext"
+	# validate copy
+	if [ ! -f "$board_home/build_$lext" ]; then
+		echo "Debug: build.log was not copied successfully."
+	else
+		echo "Log: build.log was copied successfully to $board_home."
+	fi
+	echo "Log: [cp ${OIB_DIR}/sdcard.log $board_home/sdcard_$lext]"
+	cp "${OIB_DIR}/sdcard.log" "$board_home/sdcard_$lext"
+	if [ ! -f "$board_home/sdcard_$mlext" ]; then
+		echo "Debug: sdcard.log was not copied successfully."
+	else
+		echo "Log: sdcard.log was copied successfully to $board_home."
+	fi
+fi
 
 if [ "$flag" = "no" ]; then
 	echo "There were problems during script execution. Check to see what they were."
 fi
 echo "Log: build_test.sh complete"
 
+# log
+log_date=$(date +%m/%d/%Y); # log date
+log_time=$(date +%T); # log time
+log="$PROJ/beagle_image.log"
+log_format="%-12s %-10s %-18s %-70s %-13s %-40s\n"
+printf "$log_format" "$log_date" "$log_time" "$board_model" "$my_image" "Scomp_image" "$my_build" >>$log
