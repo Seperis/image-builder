@@ -1448,9 +1448,6 @@ populate_rootfs () {
 			echo "Log: (sdcard.sh): Starting DTS No Override"
 			if [ -d ${TEMPDIR}/disk/boot/dtbs/${select_kernel}/ ] ; then
 				echo "Log: (sdcard.sh): dtbs of ${select_kernel} exists."
-				dtbs_dir=$( ls ${TEMPDIR}/disk/boot/dtbs/${select_kernel}/ )
-				echo "Log: (sdcard.sh): contents of dtbs"
-				echo "$dtbs_dir"
 				mkdir -p ${TEMPDIR}/disk/boot/dtbs/${select_kernel}/overlays/ || true
 				cp -v ${TEMPDIR}/disk/boot/dtbs/${select_kernel}/*.dtbo ${TEMPDIR}/disk/boot/dtbs/${select_kernel}/overlays/
 			fi
