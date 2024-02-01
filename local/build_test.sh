@@ -11,6 +11,7 @@ OIB_DIR="$( cd "$(dirname "$0")" ; pwd -P )"
 PROJ=/home/jennifer/projects/beaglebone
 play_home=$PROJ/beagle_play
 bb_home=$PROJ/bb_black 
+bbai_home=$PROJ/bb_ai64
 
 # variables
 time=$(date +%Y-%m-%d)
@@ -19,7 +20,7 @@ date=$(date +%Y%m%d%T)
 # build array
 arr=( "arm64_xfce_bkwm_12.4_v5.10ti_play" "arm64_min_bkwm_12.4_v6.1ti_play" "arm64_xfce_bkwm_12.4_v6.1ti_play" \
 		"arm64_xfce_bkwm_12.4_v6.7k3_play" "arm64_min_bkwm_12.4_vML_play" \
-		"armhf_xfce_bkwm_12.4_v5.10ti_bone" "armhf_iot_bkwm_12.4_v5.10ti_all" "armhf_iot_bkwm_12.4_v5.10ti_bone" \
+		"armhf_iot_beye_11.8_v5.10ti_bone" "armhf_xfce_bkwm_12.4_v5.10ti_bone" "armhf_iot_bkwm_12.4_v5.10ti_bone" \
 		"armhf_iot_bkwm_12.4_v6.1ti_bone" "armhf_min_bkwm_12.4_v6.1ti_bone" )
 
 echo "Log: starting log for build_test.sh"
@@ -31,8 +32,8 @@ echo "2. arm64_min_bkwm_12.4_v6.1ti_play"
 echo "3. arm64_xfce_bkwm_12.4_v6.1ti_play"
 echo "4. arm64_xfce_bkwm_12.4_v6.7k3_play"
 echo "5. arm64_min_bkwm_12.4_vML_play"
-echo "6. armhf_xfce_bkwm_12.4_v5.10ti_bone"
-echo "7. armhf_iot_bkwm_12.4_v5.10ti_all"
+echo "6. armhf_iot_beye_11.8_v5.10ti_bone"
+echo "7. armhf_xfce_bkwm_12.4_v5.10ti_bone"
 echo "8. armhf_iot_bkwm_12.4_v5.10ti_bone"
 echo "9. armhf_iot_bkwm_12.4_v6.1ti_bone"
 echo "10. armhf_min_bkwm_12.4_v6.1ti_bone"
@@ -199,7 +200,11 @@ if [ "$flag" = "yes" ]; then
 		opt_tags="--dtb beagleplay --boot_label BEAGLEPLAY --rootfs_label PLAY --distro-bootloader --hostname medusa"
 		board_home="$play_home"
 		board_model="Beagleplay"
-	else
+	elif [ "$board_abbr" = "bbai" ]; then
+ 		opt_tags="--dtb"
+   		board_home="$bbai_home"
+	 	board_model="BeagleBone AI-64"
+   	else
 		opt_tags="--dtb beaglebone --boot_label BEAGLEBONE --rootfs_label BONE --hostname circe"
 		board_home="$bb_home"
 		board_model="BeagleBone Black"
