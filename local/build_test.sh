@@ -197,15 +197,15 @@ if [ "$flag" = "yes" ]; then
 	# get option tags
 	echo "Log: getting option tags for setup_sdcard.sh  and home folder of board"
 	if [ "$board_abbr" = "play" ]; then
-		opt_tags="--dtb beagleplay --boot_label BEAGLEPLAY --rootfs_label PLAY --distro-bootloader --hostname medusa"
+		opt_tags="--dtb beagleplay --boot_label BEAGLEPLAY --rootfs_label PLAY --hostname circe"
 		board_home="$play_home"
 		board_model="Beagleplay"
 	elif [ "$board_abbr" = "bbai" ]; then
- 		opt_tags="--dtb"
+ 		opt_tags="---dtb bbai64 --boot_label BEAGLEAI64 --rootfs_label AI64 --hostname danae"
    		board_home="$bbai_home"
 	 	board_model="BeagleBone AI-64"
    	else
-		opt_tags="--dtb beaglebone --boot_label BEAGLEBONE --rootfs_label BONE --hostname circe"
+		opt_tags="--dtb beaglebone --boot_label BEAGLEBONE --rootfs_label BONE --hostname medusa"
 		board_home="$bb_home"
 		board_model="BeagleBone Black"
 	fi
