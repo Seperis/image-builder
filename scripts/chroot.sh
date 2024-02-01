@@ -996,7 +996,7 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 
 	custom_pkg_installation(){
 		echo "Log: (chroot): custom_pkg_installation"
-		if [ "x${deb_arch}" = "xarmhf" ]; then
+		if [ "x${deb_arch}" = "xarmhf" ] && [ "x${deb_codenam}" = "xbookworm" ]; then
 			echo "Log: (chroot) starting install"
 			cp /etc/apt/sources.list.d/beagle.list /etc/apt/sources.list.d/beagle2.list || true
 			install_bb_pkgs_bullseye
@@ -1010,7 +1010,7 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 	}
 
 	install_bb_pkgs_bullseye(){
-		echo "Log: (chroot): install_bb_cape_overlays"	
+	echo "Log: (chroot): install_bb_cape_overlays"	
         echo "deb [arch=${repo_rcnee_arch} signed-by=${rcnee_keyring}] http://${repo_rcnee_mirror}/${rcnee_url_directory}/ bullseye main" >> /etc/apt/sources.list.d/beagle.list
         echo "#deb-src [arch=${repo_rcnee_arch} signed-by=${rcnee_keyring}] http://${repo_rcnee_mirror}/${rcnee_url_directory}/ bullseye main" >> /etc/apt/sources.list.d/beagle.list
         apt-get update || true
@@ -1021,7 +1021,7 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
     }
 
 	install_bb_pkgs_arm64(){
-		echo "Log: (chroot): install_bb_pkgs_arm64"
+	echo "Log: (chroot): install_bb_pkgs_arm64"
         echo "deb [arch=arm64 signed-by=${rcnee_keyring}] http://${repo_rcnee_mirror}/${rcnee_url_directory}/ ${deb_codename} main" >> /etc/apt/sources.list.d/beagle.list
         echo "#deb-src [arch=arm64 signed-by=${rcnee_keyring}] http://${repo_rcnee_mirror}/${rcnee_url_directory}/ ${deb_codename} main" >> /etc/apt/sources.list.d/beagle.list
         apt-get update || true
