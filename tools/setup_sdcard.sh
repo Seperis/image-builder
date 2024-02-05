@@ -879,19 +879,29 @@ populate_boot () {
 	if [ "x${uboot_firwmare_dir}" = "xenable" ] ; then
 		#cp -rv ./${bootloader_distro_dir}/* "${TEMPDIR}/disk/"
 		if [ ! "x${bootloader_distro_mcu}" = "x" ] ; then
-			cp -v ./${bootloader_distro_mcu} "${TEMPDIR}/disk/"
+			if [ -f ./${bootloader_distro_mcu} ] ; then
+				cp -v ./${bootloader_distro_mcu} "${TEMPDIR}/disk/"
+			fi
 		fi
 		if [ ! "x${bootloader_distro_spl}" = "x" ] ; then
-			cp -v ./${bootloader_distro_spl} "${TEMPDIR}/disk/"
+			if [ -f ./${bootloader_distro_spl} ] ; then
+				cp -v ./${bootloader_distro_spl} "${TEMPDIR}/disk/"
+			fi
 		fi
 		if [ ! "x${bootloader_distro_img}" = "x" ] ; then
-			cp -v ./${bootloader_distro_img} "${TEMPDIR}/disk/"
+			if [ -f ./${bootloader_distro_img} ] ; then
+				cp -v ./${bootloader_distro_img} "${TEMPDIR}/disk/"
+			fi
 		fi
 		if [ ! "x${bootloader_distro_sysfw}" = "x" ] ; then
-			cp -v ./${bootloader_distro_sysfw} "${TEMPDIR}/disk/"
+			if [ -f ./${bootloader_distro_sysfw} ] ; then
+				cp -v ./${bootloader_distro_sysfw} "${TEMPDIR}/disk/"
+			fi
 		fi
 		if [ ! "x${bootloader_distro_dir_sysfw}" = "x" ] ; then
-			cp -v ./${bootloader_distro_dir_sysfw}/* "${TEMPDIR}/disk/"
+			if [ -d ./${bootloader_distro_dir_sysfw}/ ] ; then
+				cp -v ./${bootloader_distro_dir_sysfw}/* "${TEMPDIR}/disk/"
+			fi
 		fi
 	fi
 
@@ -1723,19 +1733,23 @@ populate_rootfs () {
 			if [ ! "x${extlinux_dtb_fam}" = "x" ] ; then
 				mkdir -p ${TEMPDIR}/disk/boot/firmware/${extlinux_dtb_vendor}/ || true
 				cp ${TEMPDIR}/disk/boot/dtbs/${select_kernel}/${extlinux_dtb_vendor}/${extlinux_dtb_fam}*dtb ${TEMPDIR}/disk/boot/firmware/
-				cp -v ${TEMPDIR}/disk/boot/dtbs/${select_kernel}/${extlinux_dtb_vendor}/${extlinux_dtb_fam}*dtb ${TEMPDIR}/disk/boot/firmware/${extlinux_dtb_vendor}/
+				cp ${TEMPDIR}/disk/boot/dtbs/${select_kernel}/${extlinux_dtb_vendor}/${extlinux_dtb_fam}*dtb ${TEMPDIR}/disk/boot/firmware/${extlinux_dtb_vendor}/
 				if [ -d ${TEMPDIR}/disk/boot/dtbs/${select_kernel}/${extlinux_dtb_vendor}/overlays/ ] ; then
 					mkdir -p ${TEMPDIR}/disk/boot/firmware/overlays/
-					cp -v ${TEMPDIR}/disk/boot/dtbs/${select_kernel}/${extlinux_dtb_vendor}/overlays/*.dtbo ${TEMPDIR}/disk/boot/firmware/overlays/
+					cp ${TEMPDIR}/disk/boot/dtbs/${select_kernel}/${extlinux_dtb_vendor}/overlays/*.dtbo ${TEMPDIR}/disk/boot/firmware/overlays/
+					cp ${TEMPDIR}/disk/boot/dtbs/${select_kernel}/${extlinux_dtb_vendor}/*.dtbo ${TEMPDIR}/disk/boot/firmware/overlays/
 				fi
 			fi
 		fi
 		cp -v ${TEMPDIR}/disk/boot/initrd.img-${select_kernel} ${TEMPDIR}/disk/boot/firmware/initrd.img
 
 		if [ -f ${TEMPDIR}/disk/etc/bbb.io/templates/sysconf.txt ] ; then
-			cp -v ${TEMPDIR}/disk/etc/bbb.io/templates/sysconf.txt ${TEMPDIR}/disk/boot/firmware/sysconf.txt
+			cp ${TEMPDIR}/disk/etc/bbb.io/templates/sysconf.txt ${TEMPDIR}/disk/boot/firmware/sysconf.txt
 			echo "sysconf: [cat ${TEMPDIR}/disk/boot/firmware/sysconf.txt]"
 			cat ${TEMPDIR}/disk/boot/firmware/sysconf.txt
+			if [ -f ${TEMPDIR}/disk/etc/bbb.io/templates/ssid.psk ] ; then
+				cp ${TEMPDIR}/disk/etc/bbb.io/templates/ssid.psk ${TEMPDIR}/disk/boot/firmware/ssid.psk
+			fi
 		fi
 	fi
 

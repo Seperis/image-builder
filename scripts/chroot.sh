@@ -1139,13 +1139,14 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 		useradd -G "\${default_groups}" -s /bin/bash -m -p \${pass_crypt} -c "${rfs_fullname}" ${rfs_username}
 		grep ${rfs_username} /etc/passwd
 
-		echo "Log: (chroot): [chage -l ${rfs_username}]"
-		chage -l ${rfs_username}
 		if [ "x${rfs_cyber_resilience_act}" = "xenable" ] ; then
 			if [ -f /lib/systemd/system/bbbio-set-sysconf.service ] || [ -f /usr/lib/systemd/system/bbbio-set-sysconf.service ] ; then
 				echo "Log: (chroot): [expire ${rfs_username} password]"
 				chage --lastday 0 ${rfs_username}
 				chage -l ${rfs_username}
+				###passwd -d works great for a default serial 'sign-up'
+				###but sadly ssh needs a default password, after which it'll ask for new one...
+				#passwd -d ${rfs_username}
 			fi
 		fi
 
@@ -1169,13 +1170,12 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 				EOF
 				echo "export PATH=\$PATH:/usr/local/sbin:/usr/sbin:/sbin" >> /root/.bashrc
 
-				echo "Log: (chroot): [chage -l root]"
-				chage -l root
 				if [ "x${rfs_cyber_resilience_act}" = "xenable" ] ; then
 					if [ -f /lib/systemd/system/bbbio-set-sysconf.service ] || [ -f /usr/lib/systemd/system/bbbio-set-sysconf.service ] ; then
 						echo "Log: (chroot): [expire root password]"
 						chage --lastday 0 root
 						chage -l root
+						passwd -d root
 					fi
 				fi
 			fi
@@ -1657,7 +1657,15 @@ if [ ! "x${rfs_console_banner}" = "x" ] || [ ! "x${rfs_console_user_pass}" = "x"
 		if [ ! "x${rfs_cyber_resilience_act}" = "xenable" ] ; then
 			sudo sh -c "echo 'default username:password is [${rfs_username}:${rfs_password}]' >> ${wfile}"
 		else
-			sudo sh -c "echo 'default username is [${rfs_username}]' >> ${wfile}"
+			case "${deb_distribution}" in
+			debian)
+				sudo sh -c "echo 'default username is [${rfs_username}] with a one time password of [${rfs_password}]' >> ${wfile}"
+				sudo sh -c "echo 'default [root] account is also enabled, make sure to login once as [root] to setup your password' >> ${wfile}"
+				;;
+			ubuntu)
+				sudo sh -c "echo 'default username is [${rfs_username}] with a one time password of [${rfs_password}]' >> ${wfile}"
+				;;
+			esac
 		fi
 	fi
 	sudo sh -c "echo '' >> ${wfile}"
@@ -1677,7 +1685,8 @@ if [ ! "x${rfs_ssh_banner}" = "x" ] || [ ! "x${rfs_ssh_user_pass}" = "x" ] ; the
 		if [ ! "x${rfs_cyber_resilience_act}" = "xenable" ] ; then
 			sudo sh -c "echo 'default username:password is [${rfs_username}:${rfs_password}]' >> ${wfile}"
 		else
-			sudo sh -c "echo 'default username is [${rfs_username}]' >> ${wfile}"
+			###ROOT over ssh is blocked...
+			sudo sh -c "echo 'default username is [${rfs_username}] with a one time password of [${rfs_password}]' >> ${wfile}"
 		fi
 	fi
 	sudo sh -c "echo '' >> ${wfile}"
