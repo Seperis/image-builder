@@ -427,8 +427,7 @@ fi
 if [ "x${deb_distribution}" = "xdebian" ] || [ "x${deb_distribution}" = "xubuntu" ] ; then
 	if [ "${apt_proxy}" ] ; then
 		#apt: make sure apt-cacher-ng doesn't break https repos
-		echo 'Acquire::http::Proxy::debian.beagle.cc "DIRECT";' > /tmp/03-proxy-https
-		echo 'Acquire::http::Proxy::debian.beagleboard.org "DIRECT";' >> /tmp/03-proxy-https
+		echo 'Acquire::https::Proxy::debian.beagle.cc "DIRECT";' > /tmp/03-proxy-https
 		sudo mv /tmp/03-proxy-https "${tempdir}/etc/apt/apt.conf.d/03-proxy-https"
 		sudo chown root:root "${tempdir}/etc/apt/apt.conf.d/03-proxy-https"
 	fi
@@ -1249,6 +1248,12 @@ cat > "${DIR}/chroot_script.sh" <<-__EOF__
 		echo "Log: (chroot): systemd_tweaks"
 		#We have systemd, so lets use it..
 
+		if [ ! "x${rfs_use_systemdnetworkd}" = "x" ] ; then
+			if [ ! "x${rfs_use_systemdresolved}" = "x" ] ; then
+				apt-get install -y -q systemd-resolved || true
+			fi
+		fi
+
 		#systemd v215: systemd-timesyncd.service replaces ntpdate
 		#enabled by default in v216 (not in jessie)
 		if [ -f /lib/systemd/system/systemd-timesyncd.service ] || [ -f /usr/lib/systemd/system/systemd-timesyncd.service ] ; then
@@ -1660,7 +1665,9 @@ if [ ! "x${rfs_console_banner}" = "x" ] || [ ! "x${rfs_console_user_pass}" = "x"
 			case "${deb_distribution}" in
 			debian)
 				sudo sh -c "echo 'default username is [${rfs_username}] with a one time password of [${rfs_password}]' >> ${wfile}"
-				sudo sh -c "echo 'default [root] account is also enabled, make sure to login once as [root] to setup your password' >> ${wfile}"
+				if [ ! "x${rfs_disable_root}" = "xenable" ] ; then
+					sudo sh -c "echo 'default [root] account is also enabled, make sure to login once as [root] to setup your password' >> ${wfile}"
+				fi
 				;;
 			ubuntu)
 				sudo sh -c "echo 'default username is [${rfs_username}] with a one time password of [${rfs_password}]' >> ${wfile}"
